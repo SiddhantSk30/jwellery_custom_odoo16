@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+        <record id="group_delivery_order_report" model="res.groups">
+            <field name="name">Delivery order Report</field>
+            <field name="category_id" ref="base.module_category_usability"/>
+       </record>
+        <record id="access_delivery_order_report" model="ir.model.access">
+            <field name="name">Access Delivery Order Report</field>
+            <field name="model_id" ref="dw_delivery_orders_report.model_delivery_order_report"/>
+            <field name="group_id" ref="dw_delivery_orders_report.group_delivery_order_report"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+       </record>
+
+</odoo>

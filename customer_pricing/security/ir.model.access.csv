@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_customer_pricing_config,access.customer.pricing.config,model_customer_pricing_config,base.group_user,1,1,1,1
+access_customer_pricing_line,access.customer.pricing.line,model_customer_pricing_line,base.group_user,1,1,1,1
+access_sale_order_portal_read,portal read sale.order,sale.model_sale_order,base.group_portal,1,0,0,0
+access_sale_order_line_portal_read,portal read sale.order.line,sale.model_sale_order_line,base.group_portal,1,0,0,0
+access_product_portal_read,portal read product,product.model_product_product,base.group_portal,1,0,0,0
+access_sale_order_portal,portal sale.order,sale.model_sale_order,base.group_portal,1,0,0,0
+access_sale_order_line_portal,portal sale.order.line,sale.model_sale_order_line,base.group_portal,1,0,0,0
+

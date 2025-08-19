@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="custom_quotation_detail" name="Custom Quotation Detail">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_breadcrumbs">
+                <t t-set="order" t-value="order"/> 
+                <t t-set="page_name" t-value="'pricing'"/>
+            </t>
+
+            <t t-set="title">Quotation Details</t>
+            <div class="container">
+
+                <!-- Back Button -->
+                <div class="mb-3">
+                    <a href="/my/pricing" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left me-2"></i>Back to Quotations
+                    </a>
+                </div>
+
+                <!-- Success Message -->
+                <t t-if="success_param">
+                    <div class="alert alert-success">
+                        <t t-if="success_param == 'confirmed'">
+                            Quotation confirmed successfully!
+                        </t>
+                        <t t-if="success_param == 'cancelled'">
+                            Quotation cancelled successfully!
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Error Message -->
+                <!-- <t t-if="error_param">
+                    <div class="alert alert-danger">
+                        <t t-if="error_param == 'access'">
+                            Access denied: You can only manage your own quotations.
+                        </t>
+                        <t t-if="error_param == 'notfound'">
+                            Error: Quotation not found.
+                        </t>
+                        <t t-if="error_param == 'invalid_state'">
+                            This quotation cannot be confirmed or cancelled in its current state.
+                        </t>
+                        <t t-if="error_param == 'unknown'">
+                            An unexpected error occurred. Please try again.
+                        </t>
+                    </div>
+                </t> -->
+
+                <!-- Safe Quotation Details -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4>Quotation: <t t-esc="order_data['name']"/></h4>
+                        <p><strong>Date:</strong>
+                            <t t-if="order_data['date_order']">
+                                <t t-esc="order_data['date_order'].strftime('%d-%m-%Y')"/>
+                            </t>
+                            <t t-else="">N/A</t>
+                        </p>
+                        <p><strong>Customer:</strong> 
+                            <t t-esc="order_data['partner_id'][1]"/>
+                        </p>
+                        <p><strong>Status:</strong>
+                            <t t-if="order_data['state'] == 'draft'">Draft</t>
+                            <t t-elif="order_data['state'] == 'sent'">Sent</t>
+                            <t t-elif="order_data['state'] == 'sale'">Confirmed</t>
+                            <t t-elif="order_data['state'] == 'cancel'">Cancelled</t>
+                            <t t-else="">Unknown</t>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Order Lines Table -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+
+
+
+                            
+                        </thead>
+                        <tbody>
+                            <t t-if="order_lines">
+                                <t t-foreach="order_lines" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line['product']"/></td>
+                                        <td><t t-esc="line['description']"/></td>
+                                        <td><t t-esc="line['quantity']"/></td>
+                                        <td>
+                                            <span t-esc="currency.symbol + ' ' + '{:,.2f}'.format(line['unit_price'])"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="currency.symbol + ' ' + '{:,.2f}'.format(line['subtotal'])"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No products found in this quotation
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Total -->
+                <div class="text-end">
+                    <h5>Total:
+                        <span t-esc="currency.symbol + ' ' + '{:,.2f}'.format(order_data['amount_total'])"/>
+                    </h5>
+                </div>
+
+                <!-- Custom Confirm/Cancel Buttons -->
+                <div class="mt-4 text-center">
+                    <t t-if="order_data['state'] in ['draft','sent']">
+                        <a t-att-href="'/my/orders/confirm/' + str(order_data['id'])"
+                           class="btn btn-success">Confirm</a>
+                        <a t-att-href="'/my/orders/cancel/' + str(order_data['id'])"
+                           class="btn btn-danger">Cancel</a>
+                    </t>
+                    <t t-elif="order_data['state'] == 'sale'">
+                        <span class="badge bg-success p-2">
+                            Confirmed on <t t-esc="order_data['date_order'].strftime('%d-%m-%Y')"/>
+                        </span>
+                    </t>
+                </div>
+
+            </div>
+        </t>
+    </template>
+</odoo>

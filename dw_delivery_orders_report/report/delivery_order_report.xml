@@ -1,0 +1,159 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<odoo>
+    <record id="paperformat_delivery_order_report" model="report.paperformat">
+            <field name="name">Delivery Order Report</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <!-- <field name="page_height">22</field>
+            <field name="page_width">160</field> -->
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">2</field>
+            <field name="margin_bottom">2</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+
+
+    <record id="action_report_delivery_order" model="ir.actions.report">
+        <!-- <field name="name">Delivery Order Report</field> -->
+        <field name="model">delivery.order.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dw_delivery_orders_report.report_delivery_orders</field>
+        <field name="report_file">dw_delivery_orders_report.report_delivery_orders</field>
+        <field name="binding_model_id" ref="model_delivery_order_report"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_delivery_order_report"/>
+        <field name="print_report_name">(object.get_report_name())</field>
+    </record>
+    
+    <template id="report_delivery_orders">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+               <t t-foreach="docs" t-as="o">
+                <div class="page">
+                 <h5 style="text-align:center;"><t t-esc="o.get_report_name()"/> - (<t t-esc="o.get_from_date()"/>) to (<t t-esc="o.get_to_date()"/>)</h5>
+                  <h5 style="text-align:center;">Metal Type - <t t-esc="o.get_metal_type()"/></h5>
+                    <br/>
+                    <table class="table table-bordered" style='font-size: 12px;'>
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th> 
+                                <th>Product Name</th>
+                                <th>Qty On Hand</th>
+                                <th>Deliverd Qty</th>
+                                <th>Received Qty</th>
+                                <th>On Hand Qty</th>
+                                <th>G.W</th>
+                                <th>Deliverd G.W</th>
+                                <th>On hand G.W</th>
+                                <th>Receipts G.W</th>
+                                <t t-if="o.report_type == 'delivery_orders'">
+                                <th>CP</th>
+                                <th>Delivery CP</th>
+                                <th>On Hand CP</th>
+                                </t>
+                            </tr>
+                            
+                        </thead>
+                       
+                        <t t-set="i" t-value="0"/>
+                        <t t-set="qty_on_hand_total" t-value="0"/>
+                        <t t-set="delivered_qty_total" t-value="0"/>
+                        <t t-set="on_hand_qty_total" t-value="0"/>
+                         <t t-set="received_qty_total" t-value="0"/>
+                        <t t-set="gw_total" t-value="0"/>
+                        <t t-set="delivered_gw_total" t-value="0"/>
+                        <t t-set="on_hand_gw_total" t-value="0"/>
+                        <t t-set="on_hand_receipt_gw_total" t-value="0"/>
+                        <t t-set="cp_total" t-value="0"/>
+                        <t t-set="delivery_cp_total" t-value="0"/>
+                        <t t-set="on_hand_cp_total" t-value="0"/>
+                        <t t-foreach="o.generate_data()" t-as="line">
+                            <t t-set="i" t-value="i+1"/>
+                            <tr>
+                                <td>
+                                    <t t-esc="i"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['product_name']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['qty']"/>
+                                    <t t-set="qty_on_hand_total" t-value="qty_on_hand_total + line['qty']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['delivered_qty']"/>
+                                    <t t-set="delivered_qty_total" t-value="delivered_qty_total + line['delivered_qty']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['ttl_receipts']"/>
+                                    <t t-set="received_qty_total" t-value="received_qty_total + line['ttl_receipts']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['ttl_on_hand']"/>
+                                    <t t-set="on_hand_qty_total" t-value="on_hand_qty_total + line['ttl_on_hand']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['gw']"/>
+                                    <t t-set="gw_total" t-value="gw_total + line['gw']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['ttl_de_gw']"/>
+                                    <t t-set="delivered_gw_total" t-value="delivered_gw_total + line['ttl_de_gw']"/>
+                            </td>
+                                
+                                <td>
+                                    <t t-esc="line['on_hand']"/>
+                                      <t t-set="on_hand_gw_total" t-value="on_hand_gw_total + line['on_hand']"/>
+                            </td>
+                                <td>
+                                    <t t-esc="line['receipt_gw']"/>
+                                      <t t-set="on_hand_receipt_gw_total" t-value="on_hand_receipt_gw_total + line['receipt_gw']"/>
+                            </td>
+                                <t t-if="o.report_type == 'delivery_orders'">
+                                <td>
+                                    <t t-esc="line['cost_price']"/>
+                                     <t t-set="cp_total" t-value="cp_total + line['cost_price']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="line['ttl_de_cp']"/>
+                                    <t t-set="delivery_cp_total" t-value="delivery_cp_total + line['ttl_de_cp']"/>
+                        
+                                </td>
+                                <td>
+                                    <t t-esc="line['ttl_onhand_cp']"/>
+                                    <t t-set="on_hand_cp_total" t-value="on_hand_cp_total + line['ttl_onhand_cp']"/>
+                                </td>
+                                </t>
+                            </tr>
+                        </t>
+                       
+                
+                        <tr style="font-weight: bold !important;">
+                            <td colspan="2" style="text-align:center;">Total</td>
+                            <td><t t-esc="qty_on_hand_total"/></td>
+                            <td><t t-esc="delivered_qty_total"/></td>
+                            <td><t t-esc="received_qty_total"/></td>
+                            <td><t t-esc="on_hand_qty_total"/></td>
+                            <td><t t-esc="'%.2f'%(gw_total)"/></td>
+                            <td><t t-esc="'%.2f'%(delivered_gw_total)"/></td>
+                            <td><t t-esc="'%.2f'%(on_hand_gw_total)"/></td>
+                            <td><t t-esc="'%.2f'%(on_hand_receipt_gw_total)"/></td>
+                            <t t-if="o.report_type == 'delivery_orders'">
+                            <td><t t-esc="'%.2f'%(cp_total)"/></td>
+                            <td><t t-esc="'%.2f'%(delivery_cp_total)"/></td>
+                            <td><t t-esc="'%.2f'%(on_hand_cp_total)"/></td>
+                            </t>
+                        </tr>
+                   
+                    </table>
+                </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

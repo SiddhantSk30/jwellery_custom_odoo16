@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template inherit_id="stock.report_delivery_document" id="custom_delivery_document">
+        <xpath expr="//div[@class='page']//div[@class='row mt32 mb32']" position="replace">
+        <!-- Add your custom content here -->
+        <div class="shipping_data">
+               <div >
+               <span > <strong>Shipping Date:</strong>
+                    <t t-esc="o.shipping_date"/>
+               </span>
+                </div>
+                <div>
+                <span><strong> Delivery Address:</strong>
+                    <t t-esc="o.delivery_address"/>
+
+                </span>
+                </div>
+                <div t-if="o.gross_weight">
+                <span><strong> Gross Weight:</strong>
+                    <t t-esc="o.gross_weight"/>
+
+                </span>
+                </div>
+                <div t-if="o.transporter_name">
+                <span><strong> Transporter Name:</strong>
+                    <t t-esc="o.transporter_name"/>
+
+                </span>
+                </div>
+                <div t-if="o.received_from">
+                <span><strong> Received From:</strong>
+                    <t t-esc="o.received_from"/>
+
+                </span>
+                </div>
+           
+        </div>
+    </xpath>
+    
+   
+    </template>
+</odoo>    

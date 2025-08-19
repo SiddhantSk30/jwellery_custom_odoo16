@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+  <!-- <record id="view_customer_pricing_line_tree" model="ir.ui.view">
+    <field name="name">customer.pricing.line.tree</field>
+    <field name="model">customer.pricing.line</field>
+    <field name="arch" type="xml">
+      <tree editable="bottom">
+        <field name="product_id"/>
+        <field name="discount_type"/>
+        <field name="discount_value"/>
+        <field name="final_price" readonly="1"/>
+      </tree>
+    </field>
+  </record> -->
+</odoo>

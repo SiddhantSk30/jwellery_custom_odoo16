@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Portal group to access pricing -->
+    <record id="group_customer_portal" model="res.groups">
+      <field name="name">Customer: Portal Access</field>
+      <field name="category_id" ref="base.module_category_hidden"/>
+      <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Rule to allow portal user to view only their own pricing -->
+    <record id="customer_pricing_config_rule_portal" model="ir.rule">
+      <field name="name">Customer Pricing: Portal Access</field>
+      <!-- <field name="model_id" ref="model_customer_pricing_config"/> -->
+      <field name="model_id" ref="customer_pricing.model_customer_pricing_config"/>
+      <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+      <field name="groups" eval="[(4, ref('customer_pricing.group_customer_portal'))]"/>
+    </record>
+
+    <!-- Rule for sale orders visible to portal users -->
+    <record id="sale_order_rule_portal" model="ir.rule">
+      <field name="name">Sales Order: Portal Access</field>
+      <field name="model_id" ref="sale.model_sale_order"/>
+      <field name="domain_force">
+        [
+          '|',
+          ('message_partner_ids', 'in', [user.partner_id.id]),
+          ('partner_id', '=', user.partner_id.id)
+        ]
+      </field>
+      <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+
+
+
+
+
+ <!-- Rule for portal users to access their sales orders -->
+    <record id="sale_order_portal_rule" model="ir.rule">
+      <field name="name">Portal: Own Sales Orders</field>
+      <field name="model_id" ref="sale.model_sale_order"/>
+      <field name="domain_force">
+        ['|',
+          ('message_partner_ids', 'in', [user.partner_id.id]),
+          ('partner_id', 'child_of', [user.partner_id.commercial_partner_id.id])
+        ]
+      </field>
+      <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Rule for portal users to access their order lines -->
+    <record id="sale_order_line_portal_rule" model="ir.rule">
+      <field name="name">Portal: Own Order Lines</field>
+      <field name="model_id" ref="sale.model_sale_order_line"/>
+      <field name="domain_force">
+        [('order_id.partner_id', 'child_of', [user.partner_id.commercial_partner_id.id])]
+      </field>
+      <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+
+
+
+
+
+
+    <!-- Access rights for models used by portal -->
+    <record id="access_customer_pricing_config_portal" model="ir.model.access">
+      <field name="name">customer.pricing.config portal</field>
+      <field name="model_id" ref="model_customer_pricing_config"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_customer_pricing_line_portal" model="ir.model.access">
+      <field name="name">customer.pricing.line portal</field>
+      <field name="model_id" ref="model_customer_pricing_line"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_sale_order_portal" model="ir.model.access">
+      <field name="name">sale.order portal</field>
+      <field name="model_id" ref="sale.model_sale_order"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_sale_order_line_portal" model="ir.model.access">
+      <field name="name">sale.order.line portal</field>
+      <field name="model_id" ref="sale.model_sale_order_line"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!-- Product access for portal -->
+    <record id="access_product_template_portal" model="ir.model.access">
+      <field name="name">product.template portal</field>
+      <field name="model_id" ref="product.model_product_template"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_product_product_portal" model="ir.model.access">
+      <field name="name">product.product portal</field>
+      <field name="model_id" ref="product.model_product_product"/>
+      <field name="group_id" ref="base.group_portal"/>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="0"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
+
+  </data>
+</odoo>

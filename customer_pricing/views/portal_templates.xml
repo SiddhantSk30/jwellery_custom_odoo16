@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_pricing" name="My Pricing">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">My Quotations</t>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>My Quotations</h2>
+                        <t t-if="success_param">
+                            <div class="alert alert-success">
+                                <t t-if="success_param == 'confirmed'">
+                                    Quotation confirmed successfully!
+                                </t>
+                                <t t-if="success_param == 'cancelled'">
+                                    Quotation cancelled successfully!
+                                </t>
+                            </div>
+                        </t>
+                        <t t-if="error_param">
+                            <div class="alert alert-danger">
+                                <t t-if="error_param == 'access'">
+                                    Access denied: You can only manage your own quotations.
+                                </t>
+                                <t t-if="error_param == 'notfound'">
+                                    Error: Quotation not found.
+                                </t>
+                                <t t-if="error_param == 'invalid_state'">
+                                    This quotation cannot be confirmed or cancelled in its current state.
+                                </t>
+                                <t t-if="error_param == 'unknown'">
+                                    An unexpected error occurred. Please try again.
+                                </t>
+                                <t t-if="error_param == 'pricing'">
+                                    Error loading quotations. Please contact support.
+                                </t>
+                            </div>
+                        </t>
+                        <div class="table-responsive">
+                            <t t-if="quotations">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Quotation Number</th>
+                                            <th>Date</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="quotations" t-as="order">
+                                            <tr>
+                                                <td><t t-esc="order.name"/></td>
+                                                <td>
+                                                    <t t-if="order.date_order">
+                                                        <t t-esc="order.date_order.strftime('%d-%m-%Y')"/>
+                                                    </t>
+                                                    <t t-else="">N/A</t>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="order.partner_id.commercial_partner_id.name or ''"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="order.amount_total"
+                                                          t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                                                </td>
+                                                <td>
+                                                    <t t-if="order.state == 'draft'">Draft</t>
+                                                    <t t-elif="order.state == 'sent'">Sent</t>
+                                                    <t t-elif="order.state == 'sale'">Confirmed</t>
+                                                    <t t-elif="order.state == 'done'">Done</t>
+                                                    <t t-elif="order.state == 'cancel'">Cancelled</t>
+                                                    <t t-else="">Unknown</t>
+
+                                                </td>
+                                                <td>
+                                                    <a t-att-href="'/my/orders/view/' + str(order.id)"
+                                                       class="btn btn-primary">View</a>
+                                                    <!-- <t t-if="order.state in ['draft','sent']">
+                                                        <a t-att-href="'/my/orders/confirm/' + str(order.id)"
+                                                           class="btn btn-success">Confirm</a>
+                                                        <a t-att-href="'/my/orders/cancel/' + str(order.id)"
+                                                           class="btn btn-danger">Cancel</a>
+                                                    </t> 
+                                                    <t t-elif="order.state == 'sale'">
+                                                        <span class="badge bg-success">Confirmed</span>
+                                                    </t>-->
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else="">
+                                <div class="alert alert-info">
+                                    You don't have any quotations yet.
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

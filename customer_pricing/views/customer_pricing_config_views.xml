@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  
+  <!-- Tree View -->
+  <record id="view_customer_pricing_config_tree" model="ir.ui.view">
+    <field name="name">customer.pricing.config.tree</field>
+    <field name="model">customer.pricing.config</field>
+    <field name="arch" type="xml">
+      <tree string="Customer Pricing Configurations">
+        <field name="partner_id"/>
+        <field name="note"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form View -->
+  <record id="view_customer_pricing_config_form" model="ir.ui.view">
+    <field name="name">customer.pricing.config.form</field>
+    <field name="model">customer.pricing.config</field>
+    <field name="arch" type="xml">
+      <form string="Customer Pricing Configuration">
+        <header>
+          <button name="action_generate_quotation"
+                  string="Generate Quotation"
+                  type="object"
+                  class="btn-primary"
+                  attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+          <field name="state" widget="statusbar"/>
+        </header>
+        <sheet>
+          <group>
+            <field name="partner_id"/>
+            <field name="note"/>
+          </group>
+          <group>
+            <field name="quotation_id" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="Product Pricing">
+              <field name="pricing_line_ids">
+                <tree editable="bottom">
+                
+                  <field name="product_id"/>
+                  <field name="discount_type"/>
+                  <field name="discount_value"/>
+                  <field name="quantity"/>
+                  <field name="final_price" readonly="1"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+</odoo>

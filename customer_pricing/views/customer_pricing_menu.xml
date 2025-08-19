@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Pricing Configuration Action -->
+  <record id="action_customer_pricing_config" model="ir.actions.act_window">
+    <field name="name">Custom Pricing</field>
+    <field name="res_model">customer.pricing.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Main Menu Structure -->
+  <menuitem id="menu_customer_pricing_root" name="Customer Pricing"/>
+  <menuitem id="menu_customer_pricing_config"
+            name="Pricing Configuration"
+            parent="menu_customer_pricing_root"
+            action="action_customer_pricing_config"/>
+
+  <!-- Action to open customer quotations -->
+  <record id="action_open_customer_quotations" model="ir.actions.act_window">
+    <field name="name">Customer Quotations</field>
+    <field name="res_model">sale.order</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="sale.view_order_tree"/>
+    <field name="domain">[('partner_id', '=', active_id)]</field>
+    <field name="context">
+      {"search_default_partner_id": active_id, "default_partner_id": active_id}
+    </field>
+  </record>
+
+  <!-- Customers Tree View -->
+  <record id="view_customer_pricing_unique_customers_tree" model="ir.ui.view">
+    <field name="name">res.partner.customer.pricing.tree</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+      <tree string="Customers" create="false" delete="false">
+        <field name="name"/>
+        <field name="email"/>
+        <button name="%(customer_pricing.action_open_customer_quotations)d"
+                type="action"
+                string="View Quotations"
+                class="oe_highlight"
+                icon="fa-list"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Customers Action -->
+  <record id="action_customer_pricing_unique_customers" model="ir.actions.act_window">
+    <field name="name">Customers</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_customer_pricing_unique_customers_tree"/>
+    <field name="domain">[('customer_pricing_config_ids', '!=', False)]</field>
+  </record>
+
+  <!-- Customers Menu -->
+  <menuitem id="menu_customer_pricing_customers"
+            name="Customers"
+            parent="menu_customer_pricing_root"
+            action="action_customer_pricing_unique_customers"/>
+
+  <!-- Show Confirmed Quotations -->
+  <record id="action_confirmed_quotations_invoicing" model="ir.actions.act_window">
+    <field name="name">Confirmed Quotations</field>
+    <field name="res_model">sale.order</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('state','=','sale')]</field>
+    <field name="context">{}</field>
+  </record>
+
+  <menuitem id="menu_confirmed_quotations"
+            name="Confirmed Quotations"
+            parent="account.menu_finance"
+            action="customer_pricing.action_confirmed_quotations_invoicing"/>
+</odoo>

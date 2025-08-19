@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inherit_add_new_fields" model="ir.ui.view">
+            <field name="name">add.new.field</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='website']" position="before">
+                    <field name="aadhar_no"/>
+                </xpath>
+                <xpath expr="//field[@name='aadhar_no']" position="after">
+                    <field name="passport_no"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_portal_quotation_form" model="ir.actions.act_window">
+        <field name="name">Quotation</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <!-- Show only quotations belonging to the logged-in partner -->
+        <field name="domain">[('partner_id', '=', uid)]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

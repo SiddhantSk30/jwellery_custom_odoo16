@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "Customer Pricing",
+    'summary': "Custom prices and discounts for each customer on sales orders",
+    'description': "Set customer-specific product prices and discounts, generate quotations, and allow portal users to confirm/cancel quotations.",
+    'author': "Your Name or Company",
+    'website': "https://yourcompany.com",
+    'category': 'Sales/Sales',
+    'version': '1.0',
+    'depends': ['base', 'sale', 'account', 'product', 'mail', 'portal'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/customer_pricing_security.xml',
+        'views/customer_pricing_config_views.xml',
+        'views/customer_pricing_line_views.xml',
+        'views/customer_pricing_menu.xml',
+        'views/customer_pricing_actions.xml',
+        'views/customer_pricing_portal_link.xml',
+        'views/customer_pricing_portal_detail.xml',
+        'views/portal_templates.xml',
+        'views/views.xml',
+    ],
+    'demo': ['demo/demo.xml'],
+    'installable': True,
+    'application': True,
+    'license': 'LGPL-3',
+}

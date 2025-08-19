@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Receipt Form View -->
+        <record id="view_custom_receipt_form" model="ir.ui.view">
+            <field name="name">custom.receipt.form</field>
+            <field name="model">custom.receipt</field>
+            <field name="arch" type="xml">
+                <form string="Receipt">
+                    <header>
+                        <button name="import_data" string="Import" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="import_file"/>
+                        </group>
+                        <!-- <notebook>
+                            <page string="Lines">
+                                <field name="line_ids" widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook> -->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Receipt Tree View -->
+        <record id="view_custom_receipt_tree" model="ir.ui.view">
+            <field name="name">custom.receipt.tree</field>
+            <field name="model">custom.receipt</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action to open Receipts -->
+        <record id="action_custom_receipt" model="ir.actions.act_window">
+            <field name="name">Receipts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">custom.receipt</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_custom_receipt_tree"/>
+            <!-- <field name="view_mode">tree,form</field> -->
+            
+        </record>
+        
+        <!-- Menu Item for Receipts -->
+        <!-- <menuitem id="menu_custom_receipt" name="Receipts" parent="stock.menu_stock_root" sequence="20"/> -->
+        <menuitem id="menu_custom_receipt_sub" name="Receipts" parent="menu_custom_receipt" action="action_custom_receipt"/>
+   
+        <record id="view_stock_picking_form_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_toggle_is_locked']" position="after">
+                    <button name="action_set_to_draft" string="Set to Draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'done')]}" groups="dw_receipts.group_set_to_draft_button"/>
+                </xpath>
+                <xpath expr="//button[@name='button_validate']" position="after">
+                    <button name="action_set_to_done" string="Done" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}" groups="dw_receipts.group_set_to_draft_button"/>
+                </xpath>
+            <!-- Replace the label container -->
+<xpath expr="//div[@class='o_td_label'][label[@for='partner_id']]" position="replace">
+    <div class="o_td_label">
+        <!-- Show when picking is delivery -->
+        <label for="partner_id" string="Deliver To"
+               style="font-weight:bold;"
+               attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+
+        <!-- Show when picking is receipt -->
+        <label for="partner_id" string="Receive From"
+               style="font-weight:bold;"
+               attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}"/>
+    </div>
+</xpath>
+
+<xpath expr="//field[@name='partner_id']" position="attributes">
+    <attribute name="nolabel">1</attribute>
+</xpath>
+
+
+
+
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="shipping_date"/>
+                </xpath>
+                <xpath expr="//field[@name='shipping_date']" position="after">
+                    <field name="gross_weight"/>
+                </xpath>
+                <xpath expr="//field[@name='gross_weight']" position="after">
+                    <field name="note"/>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="delivery_address" />
+                </xpath>
+                <xpath expr="//field[@name='delivery_address']" position="after">
+                    <field name="transporter_name"/>
+                </xpath>
+                <xpath expr="//field[@name='transporter_name']" position="after">
+                    <field name="received_from" invisible="1"/>
+                </xpath>
+
+                
+            </field>
+        </record>
+        <record id="view_stock_picking_tree_custom" model="ir.ui.view">
+            <field name="name">stock.picking.tree.custom</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="total_done_quantity" sum="Total Done"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="note"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- <record id="view_stock_quant_search_custom" model="ir.ui.view">
+            <field name="name">stock.quant.search.custom</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.quant_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter" position="inside">
+                    <filter string="Product Template" name="filter_product_template" domain="[]" context="{'group_by':'product_id.product_tmpl_id'}"/>
+                </xpath>
+            </field>
+        </record> -->
+
+
+
+    </data>
+</odoo>

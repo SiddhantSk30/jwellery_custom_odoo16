@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- Wizard action -->
+        <record id="action_import_epc_wizard" model="ir.actions.act_window">
+            <field name="name">Import EPC Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">import.epc.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Wizard view -->
+        <record id="view_import_epc_wizard_form" model="ir.ui.view">
+            <field name="name">import.epc.wizard.form</field>
+            <field name="model">import.epc.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Import EPC Wizard">
+                    <group>
+                        <field name="file"/>
+                        <!-- Add other fields here if needed -->
+                    </group>
+                    <footer>
+                        <button name="import_epc_codes" string="Import" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!-- <menuitem id="menu_import_epc_wizard" name="Import EPC Wizard" action="action_import_epc_wizard" parent="stock.menu_stock_root" groups="product_label.group_import_epc_wizard"/> -->
+    
+</odoo>

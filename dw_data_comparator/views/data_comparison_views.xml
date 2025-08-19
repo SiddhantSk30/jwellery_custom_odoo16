@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_data_comparison_tree" model="ir.ui.view">
+        <field name="name">data.comparison.tree</field>
+        <field name="model">data.comparison</field>
+        <field name="arch" type="xml">
+            <tree string="Data Comparison" decoration-success="quantity_xls > 0 ">
+                <field name="name" />
+                <field name="prod_name" />
+                <field name="quantity_xls" />
+                <field name="quantity_odoo"/>
+                <!-- <field name="price_xls"/>
+                <field name="price_odoo"/> -->
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_data_comparison" model="ir.actions.act_window">
+        <field name="name">Data Comparison</field>
+        <field name="res_model">data.comparison</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_data_comparison_tree"/>
+    </record>
+
+
+
+    <record id="action_data_comparison_wizard" model="ir.actions.act_window">
+            <field name="name">Compare Data</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">data.comparison.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    <!-- Define a wizard view for uploading XLS file -->
+    <record id="view_data_comparison_wizard_form" model="ir.ui.view">
+        <field name="name">data.comparison.wizard.form</field>
+        <field name="model">data.comparison.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Data Comparison Wizard">
+                <group>
+                    <field name="xls_file" widget="binary" filename="filename" string="XLS File" accept="*.xls,*.xlsx"/>
+                </group>
+                <footer>
+                    <button name="compare_data" string="Compare" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Define a menu item to access the wizard -->
+    <!-- <menuitem id="menu_data_comparison_wizard_action" name="Data Comparator Wizard" action="action_data_comparison_wizard" parent="stock.menu_stock_root" groups="dw_data_comparator.group_data_comparison"/> -->
+
+    <!-- <menuitem id="menu_data_comparison" name="Data Comparison" action="action_data_comparison" parent="stock.menu_stock_root" groups="dw_data_comparator.group_data_comparison"/> -->
+
+   
+</odoo>

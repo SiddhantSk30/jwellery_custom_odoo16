@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+   <data>
+     <record id="seq_product_code_form" model="ir.sequence">
+        <field name="name">Product Code</field>
+        <field name="code">product.template</field>
+        <field name="prefix"></field>
+        <field name="padding">0</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+     </record>
+     <record id="seq_epc_code_form" model="ir.sequence">
+        <field name="name">EPC Code</field>
+        <field name="code">product.template.sequence</field>
+        <field name="prefix">1</field>
+        <field name="padding">7</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+     </record>
+   </data>
+</odoo>

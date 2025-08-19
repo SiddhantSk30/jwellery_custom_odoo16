@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+        <record id="paperformat_product_label" model="report.paperformat">
+            <field name="name">Custom Product Label</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">22</field>
+            <field name="page_width">160</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="product_label_custom" model="ir.actions.report">
+            <field name="name">Product barcode</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">product_label.report_producttemplatelabel_custom</field>
+            <field name="report_file">product_label.report_producttemplatelabel_custom</field>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paperformat_product_label"/>
+            <field name="print_report_name">(object._get_report_base_filename())</field>
+        </record>
+
+        <template id="report_producttemplatelabel_custom">
+            <t t-call="web.basic_layout">
+                <div class="page" style='float:left;'>
+                    <t t-foreach="docs" t-as="product">
+                        <!-- <table style="width:100%;font-size:10px;font-weight:bold;">
+                            <tr>
+                                <td style="width:20%">
+                                   <pre/>
+                                </td>
+                                <td style="width:25%">
+                                   <pre/>
+                                </td>
+                                <td style="width:25%;text-align:center;border-style : hidden!important;">
+                                     <span t-esc="product.categ_id.name"/> &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-field="product.stone_type"/>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+                                </td>
+                                <td style="width:30%;border-style : hidden!important;">
+                                  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; <span t-field="product.article"/>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-field="product.code"/>
+                                </td>
+                            </tr>
+                        </table> -->
+                        <table style="width:100%;font-size:10px;font-weight:bold;font-family:Cambria;">
+                            <tr>
+                                <!-- <td style="width:45%"/> -->
+                                <td style="border-style : hidden!important;padding-right:20px;">
+                                 <span t-esc="product.categ_id.name"/> &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-field="product.stone_type"/>
+                                <br/>
+                                GR Wt : &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-esc="product.gross_wt"/>
+                                    <span>
+                                    <t t-if="not product.hide_carrat_on_label">
+                                        <br/> <!-- If checkbox is not checked, show the field's value -->
+                                        Carrat :  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+                                        <t t-esc="product.carrat"/>
+                                    </t>
+                                    <t t-else="">
+                                    </t>
+                                    </span>
+                                    <br/>
+                                    Price : &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-esc="product.get_product_price()"/>
+                                </td>
+                                <td style="text-align:center;border-style : hidden!important;">
+                                    <span t-field="product.article"/>&amp;nbsp;&amp;nbsp;&amp;nbsp;<span t-field="product.code"/>
+                                    <br/>
+                                    <!-- <span t-field="product.metal_type"/><br/>
+                                    <img t-att-src="'/report/barcode/Code128/%s' % (product.barcode)"
+                             style="overflow: hidden; width: 100%; height: 1.1rem;" alt="Barcode"/>
+                                    <br/>
+                                    <span t-esc="product.barcode" style="font-weight:bold;font-size:12px"/> -->
+                                 
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

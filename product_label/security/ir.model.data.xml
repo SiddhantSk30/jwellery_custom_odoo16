@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+        <record id="group_import_epc_wizard" model="res.groups">
+            <field name="name">Import EPC Code to Products</field>
+            <field name="category_id" ref="base.module_category_usability"/>
+       </record>
+        <record id="access_data_comparision" model="ir.model.access">
+            <field name="name">Access Import EPC</field>
+            <field name="model_id" ref="product_label.model_import_epc_wizard"/>
+            <field name="group_id" ref="product_label.group_import_epc_wizard"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+       </record>
+
+</odoo>

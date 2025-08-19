@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <template id="portal_my_home_pricing_link" inherit_id="portal.portal_my_home" name="Portal: Add My Pricing Link">
+    <xpath expr="//div[contains(@class, 'o_portal_docs')]" position="after">
+      <div class="row">
+        <div class="col-6 mt-4">
+          <div class="card mb-4" style="background-color:rgb(176, 179, 182);">  <!-- Enhanced background and border -->
+            <div class="card-body p-3">
+              <h5 class="card-title mb-2">Quotations</h5>
+              <p class="card-text text-muted mb-3">View your good quotations.</p>
+              <div class="d-flex justify-content-end">
+                <a href="/my/pricing" class="btn btn-primary">View Quotations</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </xpath>
+  </template>
+</odoo>

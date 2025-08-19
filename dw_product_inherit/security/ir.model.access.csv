@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_pallet,access.product.pallet,model_product_pallet,dw_product_inherit.group_fields_invisible,1,1,1,1
+access_product_row,access.product.row,model_product_row,dw_product_inherit.group_fields_invisible,1,1,1,1
+access_product_rack,access.product.rack,model_product_rack,dw_product_inherit.group_fields_invisible,1,1,1,1
+access_product_floor,access.product.floor,model_product_floor,dw_product_inherit.group_fields_invisible,1,1,1,1

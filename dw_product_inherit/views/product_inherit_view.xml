@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+   <data>
+      <record id="action_execute_exe" model="ir.actions.server">
+         <field name="name">Execute .exe File</field>
+         <field name="type">ir.actions.server</field>
+         <field name="model_id" ref="model_product_template"/>
+         <field name="binding_view_types">form</field>
+         <field name="state">code</field>
+         <field name="code">model.execute_action_exe_file()</field>
+      </record>
+      <record id="view_product_product_form_custom" model="ir.ui.view">
+         <field name="name">product.product.form.custom</field>
+         <field name="model">product.product</field>
+         <field name="inherit_id" ref="product.product_normal_form_view"/>
+         <field name="arch" type="xml">
+            <data>
+               <xpath expr="//field[@name='detailed_type']" position="before">
+                  <field name="pro_code"/>
+               </xpath>
+            </data>
+         </field>
+      </record>
+      <record id="product_inherit_form_view" model="ir.ui.view">
+         <field name="name">res.product.view.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_only_form_view"/>
+         <field name="arch" type="xml">
+            <header>
+               <xpath expr="//button[@name='action_update_quantity_on_hand']" position="after">
+                  <button name="execute_exe_file" string="Print RFID" type="object"/>
+               </xpath>
+            </header>
+            <xpath expr="//field[@name='detailed_type']" position="before">
+               <field name="metal" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='metal']" position="after">
+               <field name="metal_type" invisible="1"/>
+               <field name="exe_file_path" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='metal_type']" position="after">
+               <field name="stone_type" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type']" position="after">
+               <field name="carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='carrat']" position="after">
+               <field name="pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='pcs']" position="after">
+               <field name="stone_type_two" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type_two']" position="after">
+               <field name="st_two_carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_two_carrat']" position="after">
+               <field name="st_two_pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_two_pcs']" position="after">
+               <field name="stone_type_three" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type_three']" position="after">
+               <field name="st_three_carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_three_carrat']" position="after">
+               <field name="st_three_pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_three_pcs']" position="after">
+               <field name="location_id"/>
+            </xpath>
+            <xpath expr="//field[@name='location_id']" position="after">
+               <field name="floor_id"/>
+            </xpath>
+            <xpath expr="//field[@name='floor_id']" position="after">
+               <field name="rack_id"/>
+            </xpath>
+            <xpath expr="//field[@name='rack_id']" position="after">
+               <field name="row_id"/>
+            </xpath>
+            <xpath expr="//field[@name='row_id']" position="after">
+               <field name="pallet_id"/>
+            </xpath>
+            <xpath expr="//field[@name='pallet_id']" position="after">
+               <field name="supplier_nme"/>
+            </xpath>
+            <xpath expr="//field[@name='supplier_nme']" position="after">
+               <field name="article" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='article']" position="after">
+               <field name="code"/>
+            </xpath>
+            <xpath expr="//field[@name='barcode']" position="before">
+               <field name="rfid_code"/>
+            </xpath>
+            <xpath expr="//field[@name='rfid_code']" position="after">
+               <field name="epc_code"/>
+            </xpath>
+            <xpath expr="//field[@name='epc_code']" position="after">
+               <field name="shape" invisible="1"/>
+               <field name="gross_wt"/>
+            </xpath>
+            <xpath expr="//field[@name='gross_wt']" position="after">
+               <field name="net_weight" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='barcode']" position="after">
+               <field name="black_beads" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='black_beads']" position="after">
+               <field name="enamel" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='categ_id']" position="after">
+               <field name="arrival_date" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='carrat']" position="after">
+               <field name="hide_carrat_on_label" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
+               <field name="quantity"/>
+            </xpath>
+         </field>
+      </record>
+      <record id="product_template_form_inherit" model="ir.ui.view">
+         <field name="name">product.template.form.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_form_view"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+               <attribute name="groups">dw_product_inherit.group_standard_price</attribute>
+            </xpath>
+         </field>
+      </record>
+      <record id="view_product_template_search" model="ir.ui.view">
+         <field name="name">product.template.search</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
+         <field name="arch" type="xml">
+            <search>
+               <field name="code"/>
+               <field name="list_price"/>
+               <field name="standard_price"/>
+            </search>
+         </field>
+      </record>
+      <record id="product_inherit_tree_view" model="ir.ui.view">
+         <field name="name">product.tree.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_tree_view"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="before">
+               <field name="image_1920" widget="image"/>
+            </xpath>
+         </field>
+      </record>
+   </data>
+</odoo>

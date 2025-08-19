@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<template id="my_layout" inherit_id="web.layout" name="MY layout" priority="17">
+		<xpath expr="//head/title" position="replace">
+	  		<title t-esc="title or 'Dreamwarez'"/>
+		</xpath>
+		<xpath expr="//head/link" position="replace">
+	  		<link type="image/x-icon" rel="shortcut icon" t-att-href="x_icon or '/ag_odoo_debrand/static/src/img/favicon.ico'"/>
+		</xpath>
+	</template>
+
+	<template id="my_discuss_public_layout" inherit_id="mail.discuss_public_layout">
+		<xpath expr="//head/title" position="replace">
+	  		<title t-esc="title or 'Dreamwarez'"/>
+		</xpath>
+		<xpath expr="//head/link" position="replace">
+	  		<link type="image/x-icon" rel="shortcut icon" t-att-href="x_icon or '/ag_odoo_debrand/static/src/img/favicon.ico'"/>
+		</xpath>
+	</template>
+
+	<template id="my_portal_record_sidebar" inherit_id="portal.portal_record_sidebar">
+		<xpath expr="//div/div/div[2]" position="replace">
+			<div class="card-footer small text-center text-muted border-top-0 pt-1 pb-1 d-none d-lg-block">
+                Powered by <a target="_blank" href="http://www.dreamwarez.in" title="Dreamwarez">Dreamwarez</a>
+            </div>
+		</xpath>
+	</template>
+
+</odoo>

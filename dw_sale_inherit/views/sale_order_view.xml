@@ -1,0 +1,86 @@
+<odoo>
+    <data>
+        <record id="sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="order_nm"/>
+                    <field name="order_date"/>
+                    <field name="delivery_date"/>
+                    <field name="bill_amt_rs"/>
+                    <field name="cash_disc_rs"/>
+                    <field name="inv_amt"/>
+                    <field name="bill_type"/>
+                    <field name="balance_rs"/>
+                    <field name="ptype" widget="radio"/>
+                    <field name="purity"/>
+                    <field name="time_type" widget="radio"/>
+                </field>
+                <field name="payment_term_id" position="after">
+                    <field name="stone"/>
+                    <field name="net_weight"/>
+                    <field name="wastage_gms"/>
+                    <field name="wastage"/>
+                    <field name="initial"/>
+                    <field name="size"/>
+                    <field name="description"/>
+                    <field name="mc_piece_rs"/>
+                    <field name="mc_weight_gm"/>
+                    <field name="store_amt_rs"/>    
+                </field>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                    <attribute name="string">Rate</attribute> 
+                </xpath>
+
+                <!-- <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <field name="adv_paid_rs" />
+                </xpath> -->
+
+
+                <!-- <xpath expr="//page[@name='other_information']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='customer_signature']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+                 <!-- <field name="vlg_nm" position="after">
+                    <field name="outstanding_details"/>
+                </field>
+                <field name="outstanding_details" position="after">
+                    <field name="agent_id" widget="many2many_tags"/>
+                </field>
+                <field name="agent_id" position="after">
+                    <field name="court_id" widget="many2many_tags"/>
+                </field>
+                <field name="court_id" position="after">
+                    <field name="document_file"/>
+                </field>
+                 <field name="validity_date" position="before">
+                    <field name="loan_id" widget="many2many_tags"/>
+                </field>
+
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                <field name="Adv_paid_rs" />
+               </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='gatno']" position="after">
+                <field name="area" />
+                </xpath>
+             <notebook position="inside">
+                    <page string="Upload Documets" name="documents">
+                       <field name="document_line_ids">
+                        <tree editable="bottom">
+                              <field name="name"/>
+                              <field name="file"/>
+                              <field name="description"/>        
+                         </tree>
+                     </field>
+                    </page>
+                </notebook>       -->
+
+            </field>
+        </record>
+    
+    </data>
+</odoo>
