@@ -66,21 +66,6 @@
                <field name="st_three_pcs" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='st_three_pcs']" position="after">
-               <field name="location_id"/>
-            </xpath>
-            <xpath expr="//field[@name='location_id']" position="after">
-               <field name="floor_id"/>
-            </xpath>
-            <xpath expr="//field[@name='floor_id']" position="after">
-               <field name="rack_id"/>
-            </xpath>
-            <xpath expr="//field[@name='rack_id']" position="after">
-               <field name="row_id"/>
-            </xpath>
-            <xpath expr="//field[@name='row_id']" position="after">
-               <field name="pallet_id"/>
-            </xpath>
-            <xpath expr="//field[@name='pallet_id']" position="after">
                <field name="supplier_nme"/>
             </xpath>
             <xpath expr="//field[@name='supplier_nme']" position="after">
@@ -115,7 +100,21 @@
                <field name="hide_carrat_on_label" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
-               <field name="quantity"/>
+               <field name="quantity" invisible="1"/>
+            </xpath>
+            <!-- Add new Storage Information notebook page after General Information -->
+            <xpath expr="//notebook/page[@name='general_information']" position="after">
+               <page string="Storage Information" name="storage_information">
+                  <group>
+                     <group string="Storage Details">
+                        <field name="location_id" options="{'no_create': True, 'no_open': True}" domain="[('usage', '=', 'internal')]"/>
+                        <field name="floor_id" options="{'no_create': True, 'no_open': True}" domain="[('location_id', '=', location_id)]"/>
+                        <field name="rack_id" options="{'no_create': True, 'no_open': True}" domain="[('floor_id', '=', floor_id)]"/>
+                        <field name="row_id" options="{'no_create': True, 'no_open': True}" domain="[('rack_id', '=', rack_id)]"/>
+                        <field name="pallet_id" options="{'no_create': True, 'no_open': True}" domain="[('row_id', '=', row_id)]"/>
+                     </group>
+                  </group>
+               </page>
             </xpath>
          </field>
       </record>

@@ -41,11 +41,6 @@ class CustomerPricingConfig(models.Model):
         self.quotation_id = quotation.id
         self.state = 'quotation_sent'
 
-        # 🔗 Link each pricing line to the corresponding sale order line
-        # (order of creation is preserved)
-        for so_line, cfg_line in zip(quotation.order_line, self.pricing_line_ids):
-            cfg_line.sale_order_line_id = so_line.id
-
         return {
             'name': _('Quotation'),
             'type': 'ir.actions.act_window',
@@ -69,9 +64,6 @@ class CustomerPricingLine(models.Model):
     ], string="Discount Type", required=True)
     discount_value = fields.Float(string="Discount")
     final_price = fields.Float(string="Final Price", compute="_compute_final_price", store=True)
-
-    # 🔗 NEW: back-reference to the generated sale order line
-    sale_order_line_id = fields.Many2one('sale.order.line', string="Sale Order Line", readonly=True)
 
     @api.depends('product_id', 'discount_type', 'discount_value', 'quantity')
     def _compute_final_price(self):
@@ -124,45 +116,6 @@ class SaleOrder(models.Model):
             if order.customer_pricing_config_id:
                 order.customer_pricing_config_id.state = 'draft'
         return res
-
-
-class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
-
-    def unlink(self):
-        """
-        When a sale order line is deleted, delete the linked pricing line.
-        If no explicit link exists (older records), fall back to a safe product/config match.
-        """
-        for so_line in self:
-            cfg = so_line.order_id.customer_pricing_config_id
-            if not cfg:
-                # No originating pricing config — normal delete
-                continue
-
-            PricingLine = self.env['customer.pricing.line']
-
-            # Try direct link first
-            linked = PricingLine.search([
-                ('sale_order_line_id', '=', so_line.id),
-                ('config_id', '=', cfg.id),
-            ], limit=1)
-
-            if linked:
-                linked.unlink()
-                continue
-
-            # Fallback: match by product & config, prefer lines without a link
-            fallback = PricingLine.search([
-                ('config_id', '=', cfg.id),
-                ('product_id', '=', so_line.product_id.id),
-            ], order='id asc')
-            if fallback:
-                # If multiple, remove the first that is not linked; otherwise the first
-                to_delete = next((l for l in fallback if not l.sale_order_line_id), fallback[0])
-                to_delete.unlink()
-
-        return super(SaleOrderLine, self).unlink()
 
 
 class ResPartner(models.Model):

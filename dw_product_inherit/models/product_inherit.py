@@ -24,11 +24,41 @@ class InheritProduct(models.Model):
     metal = fields.Selection(
         [('gold', 'Gold'), ('silver', 'Silver')], string='Metal')
     article = fields.Char(string='Article', compute='_generate_article_seq')
-    location_id = fields.Many2one('stock.location', string="Location", required=True)
-    floor_id = fields.Many2one('product.floor', string="Floor", required=True)
-    rack_id = fields.Many2one('product.rack', string="Rack", required=True)
-    row_id = fields.Many2one('product.row', string="Row", required=True)
-    pallet_id = fields.Many2one('product.pallet', string="Pallet", required=True)
+    location_id = fields.Many2one(
+        'stock.location',
+        string="Location",
+        required=True,
+        domain="[('usage', '=', 'internal')]",
+        default=lambda self: self.env['stock.location'].search([('usage', '=', 'internal')], limit=1)
+    )
+    floor_id = fields.Many2one(
+        'product.floor',
+        string="Floor",
+        required=True,
+        domain="[('location_id', '=', location_id)]",
+        default=lambda self: self.env['product.floor'].search([], limit=1)
+    )
+    rack_id = fields.Many2one(
+        'product.rack',
+        string="Rack",
+        required=True,
+        domain="[('floor_id', '=', floor_id)]",
+        default=lambda self: self.env['product.rack'].search([], limit=1)
+    )
+    row_id = fields.Many2one(
+        'product.row',
+        string="Row",
+        required=True,
+        domain="[('rack_id', '=', rack_id)]",
+        default=lambda self: self.env['product.row'].search([], limit=1)
+    )
+    pallet_id = fields.Many2one(
+        'product.pallet',
+        string="Pallet",
+        required=True,
+        domain="[('row_id', '=', row_id)]",
+        default=lambda self: self.env['product.pallet'].search([], limit=1)
+    )
     supplier_nme = fields.Char(string="Supplier Name")
     gross_wt = fields.Float(string="Gross Weight")
     net_weight = fields.Float(string="Net Weight")
@@ -165,6 +195,19 @@ class InheritProduct(models.Model):
             mnth = current_date.strftime('%m')
             barcode = f"{frt_scd_su_nme}{nme}{current_day_str}{mnth}"
             rec.barcode = barcode
+
+    @api.model
+    def create(self, vals):
+        _logger.debug("Creating product with values: %s", vals)
+        res = super(InheritProduct, self).create(vals)
+        _logger.debug("Created product: %s", res.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+        return res
+
+    def write(self, vals):
+        _logger.debug("Writing to product %s with values: %s", self.ids, vals)
+        res = super(InheritProduct, self).write(vals)
+        _logger.debug("Updated product: %s", self.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+        return res
 
 class ProductProductInherit(models.Model):
     _inherit = 'product.product'
