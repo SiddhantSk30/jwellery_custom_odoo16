@@ -1,3 +1,4 @@
+
 from odoo import models, fields, api, _
 from datetime import datetime
 import random
@@ -119,6 +120,27 @@ class InheritProduct(models.Model):
     rfid_code = fields.Integer(
         string='RFID Code', compute='_generate_rfid_tag', readonly=True, help='RFID code for the product')
     quantity = fields.Integer(string="Quantity")
+    stock_quant_ids = fields.One2many(
+        'stock.quant', compute='_compute_stock_quant_ids', string='Stock Quantities')
+
+    # def _compute_stock_quant_ids(self):
+    #     for product in self:
+    #         product.stock_quant_ids = self.env['stock.quant'].search([
+    #             ('product_id.product_tmpl_id', '=', product.id),
+    #             ('location_id.usage', '=', 'internal')
+    #         ])
+
+    
+    def _compute_stock_quant_ids(self):
+        for product in self:
+            quants = self.env['stock.quant'].search([
+                ('product_id.product_tmpl_id', '=', product.id),
+                ('location_id.usage', '=', 'internal')
+            ])
+            # Filter quants where available quantity (quantity - reserved_quantity) is greater than 0
+            available_quants = quants.filtered(lambda q: q.quantity > q.reserved_quantity)
+            product.stock_quant_ids = available_quants
+
 
     def _compute_epc(self):
         for rec in self:

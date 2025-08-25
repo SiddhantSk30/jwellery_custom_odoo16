@@ -102,16 +102,28 @@
             <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
                <field name="quantity" invisible="1"/>
             </xpath>
-            <!-- Add new Storage Information notebook page after General Information -->
+            <!-- Add or replace Storage Information page -->
             <xpath expr="//notebook/page[@name='general_information']" position="after">
                <page string="Storage Information" name="storage_information">
                   <group>
-                     <group string="Storage Details">
-                        <field name="location_id" options="{'no_create': True, 'no_open': True}" domain="[('usage', '=', 'internal')]"/>
-                        <field name="floor_id" options="{'no_create': True, 'no_open': True}" domain="[('location_id', '=', location_id)]"/>
-                        <field name="rack_id" options="{'no_create': True, 'no_open': True}" domain="[('floor_id', '=', floor_id)]"/>
-                        <field name="row_id" options="{'no_create': True, 'no_open': True}" domain="[('rack_id', '=', rack_id)]"/>
-                        <field name="pallet_id" options="{'no_create': True, 'no_open': True}" domain="[('row_id', '=', row_id)]"/>
+                     <group string="Product Locations">
+                        <field name="stock_quant_ids" widget="one2many" readonly="1">
+                           <tree>
+                              <field name="location_id" string="Location"/>
+                              <field name="quantity" string="Quantity"/>
+                           </tree>
+                        </field>
+                     </group>
+                     <group string="Locations with Product">
+                        <field name="stock_quant_ids" widget="one2many" readonly="1">
+                           <tree>
+                              <field name="location_id" string="Location"/>
+                              <field name="quantity" string="Quantity"/>
+                           </tree>
+                        </field>
+                     </group>
+                     <group string="Total Quantity">
+                        <field name="qty_available" string="Total On Hand Quantity" readonly="1"/>
                      </group>
                   </group>
                </page>
