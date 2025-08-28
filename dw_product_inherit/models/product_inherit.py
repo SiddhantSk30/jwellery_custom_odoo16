@@ -1,4 +1,3 @@
-
 from odoo import models, fields, api, _
 from datetime import datetime
 import random
@@ -122,25 +121,36 @@ class InheritProduct(models.Model):
     quantity = fields.Integer(string="Quantity")
     stock_quant_ids = fields.One2many(
         'stock.quant', compute='_compute_stock_quant_ids', string='Stock Quantities')
+    total_internal_quantity = fields.Float(
+        string="Total Internal Quantity", compute='_compute_total_internal_quantity', readonly=True)
 
-    # def _compute_stock_quant_ids(self):
-    #     for product in self:
-    #         product.stock_quant_ids = self.env['stock.quant'].search([
-    #             ('product_id.product_tmpl_id', '=', product.id),
-    #             ('location_id.usage', '=', 'internal')
-    #         ])
-
-    
     def _compute_stock_quant_ids(self):
         for product in self:
             quants = self.env['stock.quant'].search([
                 ('product_id.product_tmpl_id', '=', product.id),
                 ('location_id.usage', '=', 'internal')
             ])
-            # Filter quants where available quantity (quantity - reserved_quantity) is greater than 0
-            available_quants = quants.filtered(lambda q: q.quantity > q.reserved_quantity)
+            available_quants = quants.filtered(lambda q: q.quantity > 0)
             product.stock_quant_ids = available_quants
 
+    def _compute_total_internal_quantity(self):
+        for product in self:
+            quants = self.env['stock.quant'].search([
+                ('product_id.product_tmpl_id', '=', product.id),
+                ('location_id.usage', '=', 'internal')
+            ])
+            product.total_internal_quantity = sum(quant.quantity for quant in quants)
+
+    @api.depends('product_variant_ids', 'product_variant_ids.qty_available')
+    def _compute_quantities(self):
+        """Override qty_available to include all internal locations."""
+        super(InheritProduct, self)._compute_quantities()
+        for product in self:
+            quants = self.env['stock.quant'].search([
+                ('product_id.product_tmpl_id', '=', product.id),
+                ('location_id.usage', '=', 'internal')
+            ])
+            product.qty_available = sum(quant.quantity for quant in quants)
 
     def _compute_epc(self):
         for rec in self:
@@ -228,7 +238,7 @@ class InheritProduct(models.Model):
     def write(self, vals):
         _logger.debug("Writing to product %s with values: %s", self.ids, vals)
         res = super(InheritProduct, self).write(vals)
-        _logger.debug("Updated product: %s", self.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+        _logger.debug("Updated product: %s", res.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
         return res
 
 class ProductProductInherit(models.Model):

@@ -31,6 +31,10 @@
                   <button name="execute_exe_file" string="Print RFID" type="object"/>
                </xpath>
             </header>
+            <!-- Move qty_available to the top -->
+            <xpath expr="//field[@name='name']" position="after">
+               <field name="qty_available" string="On Hand Stock" readonly="1"/>
+            </xpath>
             <xpath expr="//field[@name='detailed_type']" position="before">
                <field name="metal" invisible="1" />
             </xpath>
@@ -102,7 +106,7 @@
             <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
                <field name="quantity" invisible="1"/>
             </xpath>
-            <!-- Add or replace Storage Information page -->
+            <!-- Update Storage Information page -->
             <xpath expr="//notebook/page[@name='general_information']" position="after">
                <page string="Storage Information" name="storage_information">
                   <group>
@@ -110,7 +114,8 @@
                         <field name="stock_quant_ids" widget="one2many" readonly="1">
                            <tree>
                               <field name="location_id" string="Location"/>
-                              <field name="quantity" string="Quantity"/>
+                              <field name="quantity" string="Total Quantity"/>
+                              <field name="available_quantity" string="Available Quantity"/>
                            </tree>
                         </field>
                      </group>
@@ -118,12 +123,13 @@
                         <field name="stock_quant_ids" widget="one2many" readonly="1">
                            <tree>
                               <field name="location_id" string="Location"/>
-                              <field name="quantity" string="Quantity"/>
+                              <field name="quantity" string="Total Quantity"/>
+                              <field name="available_quantity" string="Available Quantity"/>
                            </tree>
                         </field>
                      </group>
-                     <group string="Total Quantity">
-                        <field name="qty_available" string="Total On Hand Quantity" readonly="1"/>
+                     <group string="Total Internal Quantity">
+                        <field name="total_internal_quantity" string="Total Internal Quantity" readonly="1"/>
                      </group>
                   </group>
                </page>
