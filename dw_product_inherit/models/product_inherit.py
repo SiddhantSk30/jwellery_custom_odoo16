@@ -1,11 +1,6 @@
 from odoo import models, fields, api, _
 from datetime import datetime
-import random
-import string
-import base64
-import subprocess
 import logging
-import binascii
 import requests
 
 _logger = logging.getLogger(__name__)
@@ -17,7 +12,7 @@ class InheritProduct(models.Model):
     metal_type = fields.Selection(
         [('925', '925'), ('14K', '14K'), ('18K', '18K'), ('22K', '22K')], string='Metal Type')
     printer_name = fields.Selection(
-        [("LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL", "PRINTER 1")],
+        [("LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL", "Printronix T820")],
         string="Printer",
         default="LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL"
     )
@@ -123,6 +118,10 @@ class InheritProduct(models.Model):
         'stock.quant', compute='_compute_stock_quant_ids', string='Stock Quantities')
     total_internal_quantity = fields.Float(
         string="Total Internal Quantity", compute='_compute_total_internal_quantity', readonly=True)
+    tracking = fields.Selection(
+        [('none', 'No Tracking'), ('serial', 'By Unique Serial Number'), ('lot', 'By Lots')],
+        string='Tracking', default='none',
+        help="Enable tracking by lot or serial number for inventory management.")
 
     def _compute_stock_quant_ids(self):
         for product in self:
@@ -154,7 +153,7 @@ class InheritProduct(models.Model):
 
     def _compute_epc(self):
         for rec in self:
-            rec.epc_code = hex(rec.rfid_code)
+            rec.epc_code = self.env['ir.sequence'].next_by_code('product.template.epc') or hex(rec.rfid_code)
 
     def execute_exe_file(self):
         metal_type = self.metal_type
@@ -206,7 +205,11 @@ class InheritProduct(models.Model):
 
     def _generate_rfid_tag(self):
         for rec in self:
-            rec.rfid_code = rec.code
+            try:
+                rec.rfid_code = int(rec.code) if rec.code and rec.code.isdigit() else 0
+            except ValueError:
+                rec.rfid_code = 0
+                _logger.warning(f"Cannot convert code '{rec.code}' to integer for RFID code")
 
     def _generate_article_seq(self):
         for rec in self:
@@ -238,7 +241,7 @@ class InheritProduct(models.Model):
     def write(self, vals):
         _logger.debug("Writing to product %s with values: %s", self.ids, vals)
         res = super(InheritProduct, self).write(vals)
-        _logger.debug("Updated product: %s", res.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+        _logger.debug("Updated product: %s", self.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
         return res
 
 class ProductProductInherit(models.Model):

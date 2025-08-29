@@ -33,7 +33,7 @@
             </header>
             <!-- Move qty_available to the top -->
             <xpath expr="//field[@name='name']" position="after">
-               <field name="qty_available" string="On Hand Stock" readonly="1"/>
+               <field name="qty_available" string="On Hand Stock" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='detailed_type']" position="before">
                <field name="metal" invisible="1" />
@@ -95,7 +95,7 @@
                <field name="black_beads" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='black_beads']" position="after">
-               <field name="enamel" invisible="1"/>
+               <field name="enamel" unused="1"/>
             </xpath>
             <xpath expr="//field[@name='categ_id']" position="after">
                <field name="arrival_date" invisible="1"/>
@@ -111,15 +111,6 @@
                <page string="Storage Information" name="storage_information">
                   <group>
                      <group string="Product Locations">
-                        <field name="stock_quant_ids" widget="one2many" readonly="1">
-                           <tree>
-                              <field name="location_id" string="Location"/>
-                              <field name="quantity" string="Total Quantity"/>
-                              <field name="available_quantity" string="Available Quantity"/>
-                           </tree>
-                        </field>
-                     </group>
-                     <group string="Locations with Product">
                         <field name="stock_quant_ids" widget="one2many" readonly="1">
                            <tree>
                               <field name="location_id" string="Location"/>
@@ -165,6 +156,18 @@
          <field name="arch" type="xml">
             <xpath expr="//field[@name='default_code']" position="before">
                <field name="image_1920" widget="image"/>
+            </xpath>
+         </field>
+      </record>
+      <!-- Make lot_id editable in stock move line for incoming pickings -->
+      <record id="view_stock_move_line_form_inherit" model="ir.ui.view">
+         <field name="name">stock.move.line.form.inherit</field>
+         <field name="model">stock.move.line</field>
+         <field name="inherit_id" ref="stock.view_move_line_form"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_id']" position="attributes">
+               <attribute name="readonly">0</attribute>
+               <attribute name="force_save">1</attribute>
             </xpath>
          </field>
       </record>
