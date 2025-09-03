@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_product_management" name="Product Management" sequence="0"/>
-
-    <!-- Location View -->
     <record id="view_location_tree" model="ir.ui.view">
         <field name="name">stock.location.tree</field>
         <field name="model">stock.location</field>
@@ -44,8 +42,6 @@
         <field name="view_id" ref="view_location_tree"/>
     </record>
     <menuitem id="menu_product_locations" name="Locations" parent="menu_product_management" sequence="1" action="action_product_location"/>
-
-    <!-- Floor View -->
     <record id="view_floor_tree" model="ir.ui.view">
         <field name="name">product.floor.tree</field>
         <field name="model">product.floor</field>
@@ -87,8 +83,6 @@
         <field name="view_id" ref="view_floor_tree"/>
     </record>
     <menuitem id="menu_product_floors" name="Floors" parent="menu_product_management" sequence="2" action="action_product_floor"/>
-
-    <!-- Rack View -->
     <record id="view_rack_tree" model="ir.ui.view">
         <field name="name">product.rack.tree</field>
         <field name="model">product.rack</field>
@@ -130,8 +124,6 @@
         <field name="view_id" ref="view_rack_tree"/>
     </record>
     <menuitem id="menu_product_rack" name="Racks" parent="menu_product_management" sequence="3" action="action_product_rack"/>
-
-    <!-- Row View -->
     <record id="view_row_tree" model="ir.ui.view">
         <field name="name">product.row.tree</field>
         <field name="model">product.row</field>
@@ -173,8 +165,6 @@
         <field name="view_id" ref="view_row_tree"/>
     </record>
     <menuitem id="menu_product_rows" name="Rows" parent="menu_product_management" sequence="4" action="action_product_row"/>
-
-    <!-- Pallet View -->
     <record id="view_pallet_tree" model="ir.ui.view">
         <field name="name">product.pallet.tree</field>
         <field name="model">product.pallet</field>

@@ -12,30 +12,11 @@
     <!-- Rule to allow portal user to view only their own pricing -->
     <record id="customer_pricing_config_rule_portal" model="ir.rule">
       <field name="name">Customer Pricing: Portal Access</field>
-      <!-- <field name="model_id" ref="model_customer_pricing_config"/> -->
-      <field name="model_id" ref="customer_pricing.model_customer_pricing_config"/>
+      <field name="model_id" ref="model_customer_pricing_config"/>
+      <!-- <field name="model_id" ref="customer_pricing.model_customer_pricing_config"/> -->
       <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
       <field name="groups" eval="[(4, ref('customer_pricing.group_customer_portal'))]"/>
     </record>
-
-    <!-- Rule for sale orders visible to portal users -->
-    <record id="sale_order_rule_portal" model="ir.rule">
-      <field name="name">Sales Order: Portal Access</field>
-      <field name="model_id" ref="sale.model_sale_order"/>
-      <field name="domain_force">
-        [
-          '|',
-          ('message_partner_ids', 'in', [user.partner_id.id]),
-          ('partner_id', '=', user.partner_id.id)
-        ]
-      </field>
-      <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-    </record>
-
-
-
-
-
 
  <!-- Rule for portal users to access their sales orders -->
     <record id="sale_order_portal_rule" model="ir.rule">
@@ -59,12 +40,6 @@
       </field>
       <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
     </record>
-
-
-
-
-
-
 
     <!-- Access rights for models used by portal -->
     <record id="access_customer_pricing_config_portal" model="ir.model.access">

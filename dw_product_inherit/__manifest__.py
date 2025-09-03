@@ -12,13 +12,12 @@
             'security/ir.model.access.csv',
             'views/product_inherit_view.xml',
             'views/code_seq.xml',
-            'views/details.xml',
-            # 'views/migration.xml',
-            
+             'views/migration.xml',
+             'views/stock_picking_inherit.xml',
             ],
     'post_init_hook': 'post_init_hook',
     'installable':True,                                                                                      
-    'auto-install':False,
+    'auto_install':False,
     'application':True,
     'license' :'LGPL-3',
     'assets':{}

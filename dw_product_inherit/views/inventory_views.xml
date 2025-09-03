@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Make fields editable in the stock.move.line form view -->
+        <record id="view_stock_move_line_form_inherit" model="ir.ui.view">
+            <field name="name">stock.move.line.form.inherit</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lot_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='qty_done']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!-- Make fields editable in the stock.move.line tree view (Detailed Operations tab) -->
+        <record id="view_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">stock.move.line.tree.inherit</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lot_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='qty_done']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!-- Pass picking_type_id context to stock.move.line -->
+        <record id="view_stock_picking_form_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_line_ids_without_package']" position="attributes">
+                    <attribute name="context">{'picking_type_id': picking_type_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

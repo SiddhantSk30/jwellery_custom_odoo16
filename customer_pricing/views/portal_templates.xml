@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Make sure the template ID matches what the controller expects -->
     <template id="portal_my_pricing" name="My Pricing">
         <t t-call="portal.portal_layout">
             <t t-set="title">My Quotations</t>
@@ -67,26 +68,11 @@
                                                           t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
                                                 </td>
                                                 <td>
-                                                    <t t-if="order.state == 'draft'">Draft</t>
-                                                    <t t-elif="order.state == 'sent'">Sent</t>
-                                                    <t t-elif="order.state == 'sale'">Confirmed</t>
-                                                    <t t-elif="order.state == 'done'">Done</t>
-                                                    <t t-elif="order.state == 'cancel'">Cancelled</t>
-                                                    <t t-else="">Unknown</t>
-
+                                                    <span t-field="order.state"/>
                                                 </td>
                                                 <td>
                                                     <a t-att-href="'/my/orders/view/' + str(order.id)"
                                                        class="btn btn-primary">View</a>
-                                                    <!-- <t t-if="order.state in ['draft','sent']">
-                                                        <a t-att-href="'/my/orders/confirm/' + str(order.id)"
-                                                           class="btn btn-success">Confirm</a>
-                                                        <a t-att-href="'/my/orders/cancel/' + str(order.id)"
-                                                           class="btn btn-danger">Cancel</a>
-                                                    </t> 
-                                                    <t t-elif="order.state == 'sale'">
-                                                        <span class="badge bg-success">Confirmed</span>
-                                                    </t>-->
                                                 </td>
                                             </tr>
                                         </t>
@@ -98,6 +84,105 @@
                                     You don't have any quotations yet.
                                 </div>
                             </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Add the detail template that the controller also expects -->
+    <template id="custom_quotation_detail" name="Quotation Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Quotation Details</t>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>Quotation: <t t-esc="order.name"/></h2>
+                        
+                        <t t-if="success_param">
+                            <div class="alert alert-success">
+                                <t t-if="success_param == 'confirmed'">
+                                    Quotation confirmed successfully!
+                                </t>
+                                <t t-if="success_param == 'cancelled'">
+                                    Quotation cancelled successfully!
+                                </t>
+                            </div>
+                        </t>
+                        <t t-if="error_param">
+                            <div class="alert alert-danger">
+                                <t t-if="error_param == 'access'">
+                                    Access denied.
+                                </t>
+                                <t t-if="error_param == 'notfound'">
+                                    Quotation not found.
+                                </t>
+                                <t t-if="error_param == 'invalid_state'">
+                                    Invalid operation for current state.
+                                </t>
+                                <t t-if="error_param == 'unknown'">
+                                    An unexpected error occurred.
+                                </t>
+                            </div>
+                        </t>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Quotation Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Date:</strong> <t t-esc="order.date_order.strftime('%d-%m-%Y') if order.date_order else 'N/A'"/></p>
+                                        <p><strong>Customer:</strong> <t t-esc="order.partner_id.name"/></p>
+                                        <p><strong>Status:</strong> <span t-field="order.state"/></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Total Amount:</strong> <span t-field="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Order Lines</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="order_lines" t-as="line">
+                                                <tr>
+                                                    <td><t t-esc="line.get('product', '')"/></td>
+                                                    <td><t t-esc="line.get('description', '')"/></td>
+                                                    <td><t t-esc="line.get('quantity', 0)"/></td>
+                                                    <td><span t-esc="line.get('unit_price', 0)"/></td>
+                                                    <td><span t-esc="line.get('subtotal', 0)"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <t t-if="order.state in ['draft','sent']">
+                                <a t-att-href="'/my/orders/confirm/' + str(order.id)" class="btn btn-success me-2">Confirm Order</a>
+                                <a t-att-href="'/my/orders/cancel/' + str(order.id)" class="btn btn-danger">Cancel Order</a>
+                            </t>
+                            <a href="/my/pricing" class="btn btn-secondary">Back to List</a>
                         </div>
                     </div>
                 </div>

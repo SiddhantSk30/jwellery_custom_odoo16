@@ -1,12 +1,8 @@
 from odoo import models, fields, api, _
 from datetime import datetime
-import random
-import string
-import base64
-import subprocess
 import logging
-import binascii
 import requests
+from lxml import etree
 
 _logger = logging.getLogger(__name__)
 
@@ -17,48 +13,13 @@ class InheritProduct(models.Model):
     metal_type = fields.Selection(
         [('925', '925'), ('14K', '14K'), ('18K', '18K'), ('22K', '22K')], string='Metal Type')
     printer_name = fields.Selection(
-        [("LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL", "PRINTER 1")],
+        [("LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL", "Printronix T820")],
         string="Printer",
         default="LAPTOP-6QQI50SJ/Printronix_Auto_ID_T820_-_PGL"
     )
     metal = fields.Selection(
         [('gold', 'Gold'), ('silver', 'Silver')], string='Metal')
     article = fields.Char(string='Article', compute='_generate_article_seq')
-    location_id = fields.Many2one(
-        'stock.location',
-        string="Location",
-        required=True,
-        domain="[('usage', '=', 'internal')]",
-        default=lambda self: self.env['stock.location'].search([('usage', '=', 'internal')], limit=1)
-    )
-    floor_id = fields.Many2one(
-        'product.floor',
-        string="Floor",
-        required=True,
-        domain="[('location_id', '=', location_id)]",
-        default=lambda self: self.env['product.floor'].search([], limit=1)
-    )
-    rack_id = fields.Many2one(
-        'product.rack',
-        string="Rack",
-        required=True,
-        domain="[('floor_id', '=', floor_id)]",
-        default=lambda self: self.env['product.rack'].search([], limit=1)
-    )
-    row_id = fields.Many2one(
-        'product.row',
-        string="Row",
-        required=True,
-        domain="[('rack_id', '=', rack_id)]",
-        default=lambda self: self.env['product.row'].search([], limit=1)
-    )
-    pallet_id = fields.Many2one(
-        'product.pallet',
-        string="Pallet",
-        required=True,
-        domain="[('row_id', '=', row_id)]",
-        default=lambda self: self.env['product.pallet'].search([], limit=1)
-    )
     supplier_nme = fields.Char(string="Supplier Name")
     gross_wt = fields.Float(string="Gross Weight")
     net_weight = fields.Float(string="Net Weight")
@@ -123,6 +84,10 @@ class InheritProduct(models.Model):
         'stock.quant', compute='_compute_stock_quant_ids', string='Stock Quantities')
     total_internal_quantity = fields.Float(
         string="Total Internal Quantity", compute='_compute_total_internal_quantity', readonly=True)
+    tracking = fields.Selection(
+        [('none', 'No Tracking'), ('serial', 'By Unique Serial Number'), ('lot', 'By Lots')],
+        string='Tracking', default='none',
+        help="Enable tracking by lot or serial number for inventory management.")
 
     def _compute_stock_quant_ids(self):
         for product in self:
@@ -143,7 +108,6 @@ class InheritProduct(models.Model):
 
     @api.depends('product_variant_ids', 'product_variant_ids.qty_available')
     def _compute_quantities(self):
-        """Override qty_available to include all internal locations."""
         super(InheritProduct, self)._compute_quantities()
         for product in self:
             quants = self.env['stock.quant'].search([
@@ -154,7 +118,7 @@ class InheritProduct(models.Model):
 
     def _compute_epc(self):
         for rec in self:
-            rec.epc_code = hex(rec.rfid_code)
+            rec.epc_code = self.env['ir.sequence'].next_by_code('product.template.epc') or hex(rec.rfid_code)
 
     def execute_exe_file(self):
         metal_type = self.metal_type
@@ -206,7 +170,11 @@ class InheritProduct(models.Model):
 
     def _generate_rfid_tag(self):
         for rec in self:
-            rec.rfid_code = rec.code
+            try:
+                rec.rfid_code = int(rec.code) if rec.code and rec.code.isdigit() else 0
+            except ValueError:
+                rec.rfid_code = 0
+                _logger.warning(f"Cannot convert code '{rec.code}' to integer for RFID code")
 
     def _generate_article_seq(self):
         for rec in self:
@@ -228,19 +196,98 @@ class InheritProduct(models.Model):
             barcode = f"{frt_scd_su_nme}{nme}{current_day_str}{mnth}"
             rec.barcode = barcode
 
-    @api.model
-    def create(self, vals):
-        _logger.debug("Creating product with values: %s", vals)
-        res = super(InheritProduct, self).create(vals)
-        _logger.debug("Created product: %s", res.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.debug("Creating products with values: %s", vals_list)
+        res = super(InheritProduct, self).create(vals_list)
+        _logger.debug("Created products: %s", res)
         return res
 
     def write(self, vals):
         _logger.debug("Writing to product %s with values: %s", self.ids, vals)
         res = super(InheritProduct, self).write(vals)
-        _logger.debug("Updated product: %s", res.read(['location_id', 'floor_id', 'rack_id', 'row_id', 'pallet_id']))
+        _logger.debug("Updated product: %s", self)
         return res
 
 class ProductProductInherit(models.Model):
     _inherit = 'product.product'
     pro_code = fields.Char(string="Product Code", related='product_tmpl_id.code')
+
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
+
+    source_on_hand_qty = fields.Float(
+        string="Source Location Stock",
+        compute='_compute_source_on_hand_qty',
+        help="Total on-hand quantity of the product in the source location."
+    )
+
+    @api.depends('product_id', 'location_id')
+    def _compute_source_on_hand_qty(self):
+        for line in self:
+            if line.product_id and line.location_id:
+                quant = self.env['stock.quant'].search([
+                    ('product_id', '=', line.product_id.id),
+                    ('location_id', '=', line.location_id.id),
+                    ('location_id.usage', '=', 'internal')
+                ], limit=1)
+                line.source_on_hand_qty = quant.quantity if quant else 0.0
+            else:
+                line.source_on_hand_qty = 0.0
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        """Override to make fields editable for internal, outgoing, and incoming operations."""
+        res = super(StockMoveLine, self).fields_view_get(view_id, view_type, toolbar, submenu)
+        if view_type in ('form', 'tree') and self.env.context.get('picking_type_id'):
+            picking_type = self.env['stock.picking.type'].browse(self.env.context['picking_type_id'])
+            if picking_type.code in ('internal', 'outgoing', 'incoming'):
+                doc = etree.XML(res['arch'])
+                fields_to_edit = ['product_id', 'lot_id', 'qty_done', 'location_id', 'location_dest_id']
+                for field in fields_to_edit:
+                    nodes = doc.xpath(f"//field[@name='{field}']")
+                    for node in nodes:
+                        node.set('readonly', '0')
+                        node.set('force_save', '1')
+                res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
+
+# Dynamically register StockProductionLot inheritance
+def register_stock_production_lot():
+    stock_module = models.Model.env['ir.module.module'].search([('name', '=', 'stock'), ('state', '=', 'installed')])
+    if stock_module and 'stock.production.lot' in models.Model._get_models():
+        _logger.info("Stock module detected; registering StockProductionLot inheritance")
+        
+        class StockProductionLot(models.Model):
+            _inherit = 'stock.production.lot'
+
+            @api.depends('name', 'product_id')
+            def name_get(self):
+                result = []
+                for lot in self:
+                    try:
+                        if lot.product_id and lot.name:
+                            quant = self.env['stock.quant'].search([
+                                ('product_id', '=', lot.product_id.id),
+                                ('lot_id', '=', lot.id),
+                                ('location_id.usage', '=', 'internal')
+                            ], limit=1)
+                            available_qty = quant.available_quantity if quant else 0.0
+                            name = f"{lot.name} ({available_qty:.1f} units)"
+                        else:
+                            name = lot.name or ''
+                    except Exception as e:
+                        _logger.error(f"Error in name_get for lot {lot.id}: {str(e)}")
+                        name = lot.name or ''
+                    result.append((lot.id, name))
+                return result
+        
+        StockProductionLot._register_hook()
+    else:
+        _logger.warning("Stock module not installed or stock.production.lot not found; skipping StockProductionLot inheritance")
+
+# Call the registration function
+try:
+    register_stock_production_lot()
+except Exception as e:
+    _logger.error(f"Failed to register StockProductionLot: {str(e)}")
