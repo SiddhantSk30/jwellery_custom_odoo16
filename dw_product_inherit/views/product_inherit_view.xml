@@ -1,231 +1,186 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <data>
-        <record id="action_execute_exe" model="ir.actions.server">
-            <field name="name">Execute .exe File</field>
-            <field name="type">ir.actions.server</field>
-            <field name="model_id" ref="model_product_template"/>
-            <field name="binding_view_types">form</field>
-            <field name="state">code</field>
-            <field name="code">model.execute_exe_file()</field>
-        </record>
-        <record id="view_product_product_form_custom" model="ir.ui.view">
-            <field name="name">product.product.form.custom</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view"/>
-            <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//field[@name='detailed_type']" position="before">
-                        <field name="pro_code"/>
-                    </xpath>
-                </data>
-            </field>
-        </record>
-        <record id="product_inherit_form_view" model="ir.ui.view">
-            <field name="name">res.product.view.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
-            <field name="arch" type="xml">
-                <header>
-                    <xpath expr="//button[@name='action_update_quantity_on_hand']" position="after">
-                        <button name="execute_exe_file" string="Print RFID" type="object"/>
-                    </xpath>
-                </header>
-                <xpath expr="//field[@name='name']" position="after">
-                    <field name="qty_available" string="On Hand Stock" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='detailed_type']" position="before">
-                    <field name="metal" invisible="1" />
-                </xpath>
-                <xpath expr="//field[@name='metal']" position="after">
-                    <field name="metal_type" invisible="1"/>
-                    <field name="exe_file_path" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='metal_type']" position="after">
-                    <field name="stone_type" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='stone_type']" position="after">
-                    <field name="carrat" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='carrat']" position="after">
-                    <field name="pcs" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='pcs']" position="after">
-                    <field name="stone_type_two" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='stone_type_two']" position="after">
-                    <field name="st_two_carrat" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='st_two_carrat']" position="after">
-                    <field name="st_two_pcs" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='st_two_pcs']" position="after">
-                    <field name="stone_type_three" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='stone_type_three']" position="after">
-                    <field name="st_three_carrat" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='st_three_carrat']" position="after">
-                    <field name="st_three_pcs" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='st_three_pcs']" position="after">
-                    <field name="supplier_nme"/>
-                </xpath>
-                <xpath expr="//field[@name='supplier_nme']" position="after">
-                    <field name="article" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='article']" position="after">
-                    <field name="code"/>
-                </xpath>
-                <xpath expr="//field[@name='barcode']" position="before">
-                    <field name="rfid_code"/>
-                </xpath>
-                <xpath expr="//field[@name='rfid_code']" position="after">
-                    <field name="epc_code"/>
-                </xpath>
-                <xpath expr="//field[@name='epc_code']" position="after">
-                    <field name="shape" invisible="1"/>
-                    <field name="gross_wt"/>
-                </xpath>
-                <xpath expr="//field[@name='gross_wt']" position="after">
-                    <field name="net_weight" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='barcode']" position="after">
-                    <field name="black_beads" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='black_beads']" position="after">
-                    <field name="enamel" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='categ_id']" position="after">
-                    <field name="arrival_date" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='carrat']" position="after">
-                    <field name="hide_carrat_on_label" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
-                    <field name="quantity" invisible="1"/>
-                </xpath>
-                <xpath expr="//notebook/page[@name='general_information']" position="after">
-                    <page string="Storage Information" name="storage_information">
-                        <group>
-                            <group string="Product Locations">
-                                <field name="stock_quant_ids" widget="one2many" readonly="1">
-                                    <tree>
-                                        <field name="location_id" string="Location"/>
-                                        <field name="quantity" string="Total Quantity"/>
-                                        <field name="available_quantity" string="Available Quantity"/>
-                                    </tree>
-                                </field>
-                            </group>
-                            <group string="Total Internal Quantity">
-                                <field name="total_internal_quantity" string="Total Internal Quantity" readonly="1"/>
-                            </group>
-                        </group>
-                    </page>
-                </xpath>
-            </field>
-        </record>
-        <record id="product_template_form_inherit" model="ir.ui.view">
-            <field name="name">product.template.form.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='standard_price']" position="attributes">
-                    <attribute name="groups">dw_product_inherit.group_standard_price</attribute>
-                </xpath>
-            </field>
-        </record>
-        <record id="view_product_template_search" model="ir.ui.view">
-            <field name="name">product.template.search</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="code"/>
-                    <field name="list_price"/>
-                    <field name="standard_price"/>
-                </search>
-            </field>
-        </record>
-        <record id="product_inherit_tree_view" model="ir.ui.view">
-            <field name="name">product.tree.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_tree_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='default_code']" position="before">
-                    <field name="image_1920" widget="image"/>
-                </xpath>
-            </field>
-        </record>
-        <!-- Make product_id, lot_id, qty_done, location_id, location_dest_id editable for internal, outgoing, and incoming operations -->
-        <record id="view_stock_move_line_form_inherit" model="ir.ui.view">
-            <field name="name">stock.move.line.form.inherit</field>
-            <field name="model">stock.move.line</field>
-            <field name="inherit_id" ref="stock.view_move_line_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='product_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='lot_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='qty_done']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_dest_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_dest_id']" position="after">
-                    <field name="source_on_hand_qty" string="Source Stock" readonly="1"/>
-                </xpath>
-            </field>
-        </record>
-        <record id="view_move_line_tree_inherit" model="ir.ui.view">
-            <field name="name">stock.move.line.tree.inherit</field>
-            <field name="model">stock.move.line</field>
-            <field name="inherit_id" ref="stock.view_move_line_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='product_id']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='lot_id']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='qty_done']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_id']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_dest_id']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                    <attribute name="force_save">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='location_dest_id']" position="after">
-                    <field name="source_on_hand_qty" string="Source Stock" readonly="1"/>
-                </xpath>
-            </field>
-        </record>
-        <!-- Hide Operations tab and focus on Detailed Operations -->
-        <record id="view_stock_picking_form_inherit" model="ir.ui.view">
-            <field name="name">stock.picking.form.inherit</field>
-            <field name="model">stock.picking</field>
-            <field name="inherit_id" ref="stock.view_picking_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='move_ids_without_package']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='move_line_ids_without_package']" position="attributes">
-                    <attribute name="context">{'picking_type_id': picking_type_id, 'default_detailed_operations': True}</attribute>
-                </xpath>
-            </field>
-        </record>
-    </data>
+   <data>
+      <record id="action_execute_exe" model="ir.actions.server">
+         <field name="name">Execute .exe File</field>
+         <field name="type">ir.actions.server</field>
+         <field name="model_id" ref="model_product_template"/>
+         <field name="binding_view_types">form</field>
+         <field name="state">code</field>
+         <field name="code">model.execute_action_exe_file()</field>
+      </record>
+      <record id="view_product_product_form_custom" model="ir.ui.view">
+         <field name="name">product.product.form.custom</field>
+         <field name="model">product.product</field>
+         <field name="inherit_id" ref="product.product_normal_form_view"/>
+         <field name="arch" type="xml">
+            <data>
+               <xpath expr="//field[@name='detailed_type']" position="before">
+                  <field name="pro_code"/>
+               </xpath>
+            </data>
+         </field>
+      </record>
+      <record id="product_inherit_form_view" model="ir.ui.view">
+         <field name="name">res.product.view.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_only_form_view"/>
+         <field name="arch" type="xml">
+            <header>
+               <xpath expr="//button[@name='action_update_quantity_on_hand']" position="after">
+                  <button name="execute_exe_file" string="Print RFID" type="object"/>
+               </xpath>
+            </header>
+            <!-- Move qty_available to the top -->
+            <xpath expr="//field[@name='name']" position="after">
+               <field name="qty_available" string="On Hand Stock" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='detailed_type']" position="before">
+               <field name="metal" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='metal']" position="after">
+               <field name="metal_type" invisible="1"/>
+               <field name="exe_file_path" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='metal_type']" position="after">
+               <field name="stone_type" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type']" position="after">
+               <field name="carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='carrat']" position="after">
+               <field name="pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='pcs']" position="after">
+               <field name="stone_type_two" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type_two']" position="after">
+               <field name="st_two_carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_two_carrat']" position="after">
+               <field name="st_two_pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_two_pcs']" position="after">
+               <field name="stone_type_three" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='stone_type_three']" position="after">
+               <field name="st_three_carrat" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_three_carrat']" position="after">
+               <field name="st_three_pcs" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='st_three_pcs']" position="after">
+               <field name="supplier_nme"/>
+            </xpath>
+            <xpath expr="//field[@name='supplier_nme']" position="after">
+               <field name="article" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='article']" position="after">
+               <field name="code"/>
+            </xpath>
+            <xpath expr="//field[@name='barcode']" position="before">
+               <field name="rfid_code"/>
+            </xpath>
+            <xpath expr="//field[@name='rfid_code']" position="after">
+               <field name="epc_code"/>
+            </xpath>
+            <xpath expr="//field[@name='epc_code']" position="after">
+               <field name="shape" invisible="1"/>
+               <field name="gross_wt"/>
+            </xpath>
+            <xpath expr="//field[@name='gross_wt']" position="after">
+               <field name="net_weight" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='barcode']" position="after">
+               <field name="black_beads" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='black_beads']" position="after">
+               <field name="enamel" unused="1"/>
+            </xpath>
+            <xpath expr="//field[@name='categ_id']" position="after">
+               <field name="arrival_date" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='carrat']" position="after">
+               <field name="hide_carrat_on_label" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='hide_carrat_on_label']" position="after">
+               <field name="quantity" invisible="1"/>
+            </xpath>
+            <!-- Update Storage Information page -->
+            <xpath expr="//notebook/page[@name='general_information']" position="after">
+            <page string="Storage Information" name="storage_information">
+               <!-- Full-width one2many table -->
+               <div class="o_row">
+                  <field name="stock_quant_ids"
+                     widget="one2many"
+                     readonly="1"
+                     nolabel="1"
+                     class="oe_inline oe_full">
+                  <tree string="Storage Details" editable="false" create="false" delete="false">
+                     <field name="location_id" string="Location"/>
+                     <field name="lot_id" string="Serial/Lot"/>
+                     <!-- Built-in aggregations via the `sum` attribute -->
+                     <field name="available_quantity" string="Available" sum="Total Available"/>
+                     <field name="reserved_quantity" string="Reserved" sum="Total Reserved"/>
+                     <field name="quantity" string="On Hand" sum="Total On Hand"/>
+                  </tree>
+               </field>
+        </div>
+        <!-- Total field below -->
+        <div class="o_row">
+            <field name="total_internal_quantity"
+                   string="Total Internal Quantity"
+                   readonly="1"
+                   class="oe_inline oe_full"/>
+                </div>
+             </page>
+             </xpath>
+               </field>
+            </record>
+      
+      <record id="product_template_form_inherit" model="ir.ui.view">
+         <field name="name">product.template.form.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_form_view"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+               <attribute name="groups">dw_product_inherit.group_standard_price</attribute>
+            </xpath>
+         </field>
+      </record>
+      <record id="view_product_template_search" model="ir.ui.view">
+         <field name="name">product.template.search</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
+         <field name="arch" type="xml">
+            <search>
+               <field name="code"/>
+               <field name="list_price"/>
+               <field name="standard_price"/>
+            </search>
+         </field>
+      </record>
+      <record id="product_inherit_tree_view" model="ir.ui.view">
+         <field name="name">product.tree.inherit</field>
+         <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_tree_view"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="before">
+               <field name="image_1920" widget="image"/>
+            </xpath>
+         </field>
+      </record>
+      <!-- Make lot_id editable in stock move line for incoming pickings -->
+      <record id="view_stock_move_line_form_inherit" model="ir.ui.view">
+         <field name="name">stock.move.line.form.inherit</field>
+         <field name="model">stock.move.line</field>
+         <field name="inherit_id" ref="stock.view_move_line_form"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_id']" position="attributes">
+               <attribute name="readonly">0</attribute>
+               <attribute name="force_save">1</attribute>
+            </xpath>
+         </field>
+      </record>
+   </data>
 </odoo>

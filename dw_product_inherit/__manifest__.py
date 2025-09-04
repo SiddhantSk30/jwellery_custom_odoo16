@@ -12,9 +12,11 @@
             'security/ir.model.access.csv',
             'views/product_inherit_view.xml',
             'views/code_seq.xml',
-             'views/migration.xml',
-             'views/stock_picking_inherit.xml',
+            'views/details.xml',
+            'views/migration.xml',
+            
             ],
+    'assets': {'web.assets_backend': ['your_module_name/static/src/css/custom.css',],},
     'post_init_hook': 'post_init_hook',
     'installable':True,                                                                                      
     'auto_install':False,
