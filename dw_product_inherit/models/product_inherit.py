@@ -1,4 +1,5 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.exceptions import UserError
 from datetime import datetime
 import logging
 import requests
@@ -260,3 +261,34 @@ class StockQuant(models.Model):
     def _compute_available_corrected(self):
         for quant in self:
             quant.available_qty_corrected = quant.quantity - quant.reserved_quantity
+
+
+class StockPicking(models.Model):
+    _inherit = "stock.picking"
+
+    @api.constrains('move_ids_without_package')
+    def _check_available_qty(self):
+        for picking in self:
+            if picking.picking_type_code == 'outgoing':  # Only deliveries
+                for move in picking.move_ids_without_package:
+                    product = move.product_id
+                    qty_requested = move.product_uom_qty
+                    qty_available = product.qty_available
+
+                    if qty_requested > qty_available:
+                        raise UserError(
+                            f"You cannot deliver {qty_requested} {product.uom_id.name} of {product.display_name}. "
+                            f"Only {qty_available} available in stock."
+                        )
+
+    def button_validate(self):
+            for picking in self:
+                if picking.picking_type_code == 'outgoing':
+                    for move in picking.move_ids_without_package:
+                        product = move.product_id
+                        if move.product_uom_qty > product.qty_available:
+                            raise UserError(
+                                f"Not enough stock for {product.display_name}. "
+                                f"Available: {product.qty_available}, Requested: {move.product_uom_qty}"
+                            )
+            return super().button_validate()
